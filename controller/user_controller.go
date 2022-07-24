@@ -16,7 +16,10 @@ func (uc *UserController) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var newUser model.User
 		if err := c.Bind(&newUser); err != nil {
-			return c.JSON(http.StatusBadRequest, "error when parsing data")
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "error when parsing data",
+				"status":  false,
+			})
 		}
 
 		res, err := uc.Model.Insert(newUser)
@@ -59,12 +62,18 @@ func (uc *UserController) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var input model.User
 		if err := c.Bind(&input); err != nil {
-			return c.JSON(http.StatusBadRequest, "error when parsing data")
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "error when parsing data",
+				"status":  false,
+			})
 		}
 
 		res, err := uc.Model.Login(input.Email, input.Password)
 		if err != nil {
-			return c.JSON(http.StatusOK, err.Error())
+			return c.JSON(http.StatusOK, map[string]interface{}{
+				"message": err.Error(),
+				"status":  false,
+			})
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
@@ -82,13 +91,19 @@ func (uc *UserController) UpdateProfile() echo.HandlerFunc {
 		cnv, _ := strconv.Atoi(readID)
 
 		if err := c.Bind(&input); err != nil {
-			return c.JSON(http.StatusBadRequest, "error when parsing data")
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "error when parsing data",
+				"status":  false,
+			})
 		}
 		input.ID = cnv
 
 		res, err := uc.Model.Update(input)
 		if err != nil {
-			return c.JSON(http.StatusOK, err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": err.Error(),
+				"status":  false,
+			})
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
