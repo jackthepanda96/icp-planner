@@ -10,7 +10,7 @@ type User struct {
 }
 
 type UserModel struct {
-	data []User
+	Data []User
 }
 
 func GenerateID(last int) int {
@@ -18,12 +18,12 @@ func GenerateID(last int) int {
 		last++
 		return last
 	}
-	return 0
+	return 1
 }
 
 func (um *UserModel) Insert(newUser User) (User, error) {
-	newUser.ID = GenerateID(len(um.data))
-	um.data = append(um.data, newUser)
+	newUser.ID = GenerateID(len(um.Data))
+	um.Data = append(um.Data, newUser)
 
 	return newUser, nil
 }
@@ -36,10 +36,10 @@ func (um *UserModel) Insert(newUser User) (User, error) {
 // 	return updatedUser, nil
 // }
 func (um *UserModel) GetAll() ([]User, error) {
-	if len(um.data) == 0 {
+	if len(um.Data) == 0 {
 		return nil, errors.New("no record on database")
 	}
-	return um.data, nil
+	return um.Data, nil
 }
 
 // func (um *UserModel) Login(email string, password string) (User, error) {

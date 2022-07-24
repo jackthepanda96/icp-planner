@@ -8,7 +8,7 @@ import (
 )
 
 type UserController struct {
-	data model.UserModel
+	Model model.UserModel
 }
 
 func (uc *UserController) Register() echo.HandlerFunc {
@@ -18,7 +18,7 @@ func (uc *UserController) Register() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, "error when parsing data")
 		}
 
-		res, err := uc.data.Insert(newUser)
+		res, err := uc.Model.Insert(newUser)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -31,6 +31,25 @@ func (uc *UserController) Register() echo.HandlerFunc {
 			"message": "success insert user",
 			"status":  true,
 			"data":    []model.User{res},
+		})
+	}
+}
+
+func (uc *UserController) GetAllUSer() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		res, err := uc.Model.GetAll()
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "error from server",
+				"status":  false,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success get all user",
+			"status":  true,
+			"data":    res,
 		})
 	}
 }

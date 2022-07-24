@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/jackthepanda96/icp-planner/controller"
 	"github.com/jackthepanda96/icp-planner/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -22,8 +23,11 @@ func main() {
 	}))
 	e.Use(middleware.RemoveTrailingSlash())
 
-	// um := model.UserModel{}
-	// uc := controller.UserController
+	um := model.UserModel{Data: listData}
+	uc := controller.UserController{Model: um}
+
+	e.GET("/users", uc.GetAllUSer())
+	e.POST("/users", uc.Register())
 
 	e.Logger.Fatal(e.Start(":80"))
 }
