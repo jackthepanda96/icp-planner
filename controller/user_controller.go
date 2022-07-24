@@ -31,7 +31,7 @@ func (uc *UserController) Register() echo.HandlerFunc {
 		return c.JSON(http.StatusCreated, map[string]interface{}{
 			"message": "success insert user",
 			"status":  true,
-			"data":    []model.User{res},
+			"data":    ParseToResponse(res),
 		})
 	}
 }
@@ -50,7 +50,7 @@ func (uc *UserController) GetAllUSer() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success get all user",
 			"status":  true,
-			"data":    res,
+			"data":    ParseToResponseArr(res),
 		})
 	}
 }
@@ -70,7 +70,7 @@ func (uc *UserController) Login() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "login success",
 			"status":  true,
-			"data":    res,
+			"data":    ParseToResponse(res),
 		})
 	}
 }
@@ -94,7 +94,7 @@ func (uc *UserController) UpdateProfile() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success update profile",
 			"status":  true,
-			"data":    res,
+			"data":    ParseToResponse(res),
 		})
 	}
 }
