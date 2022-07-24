@@ -33,7 +33,11 @@ func GenerateID(last int) int {
 }
 
 func (um *UserModel) Insert(newUser User) (User, error) {
-	newUser.ID = GenerateID(len(listData))
+	if len(balanceHistory) == 0 {
+		newUser.ID = GenerateID(0)
+	} else {
+		newUser.ID = GenerateID(listData[len(listData)-1].ID)
+	}
 	encryptPass, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 	newUser.Password = string(encryptPass)
 	listData = append(listData, newUser)
