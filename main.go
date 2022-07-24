@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jackthepanda96/icp-planner/controller"
 	"github.com/jackthepanda96/icp-planner/model"
@@ -56,5 +57,5 @@ func main() {
 		return true, nil
 	}))
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
