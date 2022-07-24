@@ -2,9 +2,18 @@ package model
 
 import (
 	"errors"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
+
+var (
+	listData []User
+)
+
+func init() {
+	listData = []User{}
+}
 
 type User struct {
 	ID       int
@@ -13,9 +22,7 @@ type User struct {
 	Password string `json:"password"`
 }
 
-type UserModel struct {
-	Data []User
-}
+type UserModel struct{}
 
 func GenerateID(last int) int {
 	if last > 0 {
@@ -26,31 +33,47 @@ func GenerateID(last int) int {
 }
 
 func (um *UserModel) Insert(newUser User) (User, error) {
-	newUser.ID = GenerateID(len(um.Data))
+	newUser.ID = GenerateID(len(listData))
 	encryptPass, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 	newUser.Password = string(encryptPass)
-	um.Data = append(um.Data, newUser)
+	listData = append(listData, newUser)
 
 	return newUser, nil
 }
 
-// func (um *UserModel) Update(updatedUser User) (User, error) {
-// 	if err := um.db.Save(&updatedUser).Error; err != nil {
-// 		return User{}, err
-// 	}
+func (um *UserModel) Update(updatedUser User) (User, error) {
+	use := -1
+	for idx, val := range listData {
+		if val.ID == updatedUser.ID {
+			use = idx
+		}
+	}
 
-// 	return updatedUser, nil
-// }
+	if use == -1 {
+		return User{}, errors.New("no data found")
+	}
+
+	if updatedUser.Nama != "" {
+		listData[use].Nama = updatedUser.Nama
+	}
+
+	if updatedUser.Email != "" {
+		listData[use].Email = updatedUser.Email
+	}
+
+	return listData[use], nil
+}
 func (um *UserModel) GetAll() ([]User, error) {
-	if len(um.Data) == 0 {
+	if len(listData) == 0 {
 		return nil, errors.New("no record on database")
 	}
-	return um.Data, nil
+	return listData, nil
 }
 
 func (um *UserModel) Login(email string, password string) (User, error) {
+	log.Println(email, password, listData)
 	var res User
-	for _, val := range um.Data {
+	for _, val := range listData {
 		if val.Email == email {
 			res = val
 		}

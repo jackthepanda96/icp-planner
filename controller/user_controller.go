@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/jackthepanda96/icp-planner/model"
 	"github.com/labstack/echo/v4"
@@ -68,6 +69,30 @@ func (uc *UserController) Login() echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "login success",
+			"status":  true,
+			"data":    res,
+		})
+	}
+}
+
+func (uc *UserController) UpdateProfile() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input model.User
+		readID := c.Param("id")
+		cnv, _ := strconv.Atoi(readID)
+
+		if err := c.Bind(&input); err != nil {
+			return c.JSON(http.StatusBadRequest, "error when parsing data")
+		}
+		input.ID = cnv
+
+		res, err := uc.Model.Update(input)
+		if err != nil {
+			return c.JSON(http.StatusOK, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success update profile",
 			"status":  true,
 			"data":    res,
 		})
