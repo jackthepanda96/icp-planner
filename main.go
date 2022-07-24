@@ -28,6 +28,7 @@ func main() {
 
 	e.GET("/users", uc.GetAllUSer())
 	e.POST("/users", uc.Register())
+	e.POST("/login", uc.Login())
 
 	e.Logger.Fatal(e.Start(":80"))
 }

@@ -1,12 +1,16 @@
 package model
 
-import "errors"
+import (
+	"errors"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
 	ID       int
-	Nama     string
-	Email    string
-	Password string
+	Nama     string `json:"nama"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type UserModel struct {
@@ -23,6 +27,8 @@ func GenerateID(last int) int {
 
 func (um *UserModel) Insert(newUser User) (User, error) {
 	newUser.ID = GenerateID(len(um.Data))
+	encryptPass, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	newUser.Password = string(encryptPass)
 	um.Data = append(um.Data, newUser)
 
 	return newUser, nil
@@ -42,17 +48,23 @@ func (um *UserModel) GetAll() ([]User, error) {
 	return um.Data, nil
 }
 
-// func (um *UserModel) Login(email string, password string) (User, error) {
-// 	var res User
-// 	if err := um.db.Where("email = ?", email).First(&res).Error; err != nil {
-// 		return User{}, err
-// 	}
+func (um *UserModel) Login(email string, password string) (User, error) {
+	var res User
+	for _, val := range um.Data {
+		if val.Email == email {
+			res = val
+		}
+	}
 
-// 	err := bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(password))
-// 	if err != nil {
-// 		return User{}, errors.New("password salah")
-// 	}
+	if res.ID == 0 {
+		return User{}, errors.New("no data found")
+	}
 
-// 	return res, nil
+	err := bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(password))
+	if err != nil {
+		return User{}, errors.New("wrong password")
+	}
 
-// }
+	return res, nil
+
+}

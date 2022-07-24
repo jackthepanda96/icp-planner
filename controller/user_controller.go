@@ -53,3 +53,23 @@ func (uc *UserController) GetAllUSer() echo.HandlerFunc {
 		})
 	}
 }
+
+func (uc *UserController) Login() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input model.User
+		if err := c.Bind(&input); err != nil {
+			return c.JSON(http.StatusBadRequest, "error when parsing data")
+		}
+
+		res, err := uc.Model.Login(input.Email, input.Password)
+		if err != nil {
+			return c.JSON(http.StatusOK, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "login success",
+			"status":  true,
+			"data":    res,
+		})
+	}
+}
